@@ -6,7 +6,6 @@ import { NoteText } from './components/NoteText.js';
 import { ErrorDialog } from './components/ErrorDialog.js';
 import { MomentGrid } from './components/MomentGrid.js';
 import { socket } from './socket';
-import backgroundVideo from './stars.mp4'
 import './App.css';
 import { BasicInfo } from './components/BasicInfo.js';
 
@@ -32,6 +31,7 @@ const App = () => {
       setLoading(false);
       setMoments([]);
       setError({ show: true, title: "Maintenence in progress", desc: "Please try again later" });
+      socket.disconnect();
     });
 
     socket.on("serverError", data => {
@@ -46,11 +46,15 @@ const App = () => {
   };
 
   const handleSubmit = (event) => {
-    setProgressText("");
-    socket.emit('sendUrl', tempUrl);
-    setUrl(tempUrl);
-    setLoading(true);
-    setMoments([]);
+    if (!socket.connected) {
+      setError({ show: true, title: "Maintenence in progress", desc: "Please try again later" });
+    } else {
+      setProgressText("");
+      socket.emit('sendUrl', tempUrl);
+      setUrl(tempUrl);
+      setLoading(true);
+      setMoments([]);
+    }
   };
 
   const handleError = () => {
@@ -59,19 +63,6 @@ const App = () => {
 
   return (
     <div className="App">
-      <video autoPlay loop muted style={{
-        position: "fixed",
-        transform: "rotateX(180deg)",
-        width: "100vw",
-        height: "100vh",
-        zIndex: -1,
-        objectFit: "cover",
-        top: 0,
-        left: 0,
-        marginBottom: 0
-      }}>
-        <source src={backgroundVideo} type='video/mp4' />
-      </video>
       <div style={{
         flex: "1 0 70%",
         flexDirection: 'column',
@@ -82,14 +73,13 @@ const App = () => {
         alignContent: 'center',
         alignItems: 'center',
         zIndex: 0,
+        background: "radial-gradient(#00182C, #000000)",
       }}>
         <div style={{
           width: "100%",
-          position: "fixed"
         }}>
           <h1 style={{
-            marginBottom: 0,
-            marginRight: 10,
+            marginBottom: 0
           }}>
             Find The Moment
           </h1>
@@ -98,7 +88,7 @@ const App = () => {
           <p style={{
             fontSize: 20,
             color: blue[100],
-            paddingRight: 5,
+            paddingRight: 0,
             marginTop: 5,
             marginBottom: 50
           }}> Discover jumpscares, peak moments, and more! </p>
@@ -140,7 +130,7 @@ const App = () => {
       <div style={{
         flex: "1 0 30%",
         ///background: "radial-gradient(#282c34, #0D0E0F)",
-        background: "radial-gradient(#282c34, #000000)",
+        background: "#000000",
         display: 'flex',
         color: "#ffffff",
         alignItems: 'center',

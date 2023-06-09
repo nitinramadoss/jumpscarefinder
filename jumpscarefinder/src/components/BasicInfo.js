@@ -33,7 +33,7 @@ export const BasicInfo = () => {
                     <CloudUploadIcon style={{ paddingTop: 5, color: "#bbdefb" }}/>
 
                 </div>
-                <p style={{ marginTop: 5, fontSize: "1.1vmax" }}>Upload a Youtube video by <br />entering its URL</p>
+                <p style={{ marginTop: 5, fontSize: "1.1vmax" }}>Enter the Youtube URL for a <br />horror video</p>
             </div>
 
             <div

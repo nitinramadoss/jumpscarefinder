@@ -18,8 +18,8 @@ const notes =
         "When will it finish??",
         "Our detection magic has a tendency to catch when a door opens...",
         "Abracadabra! The moments will be found in 3-5 business days",
-        "If it says 'Processing Video' forever, try refreshing the page",
         "Our detection magic often struggles with voiced-over videos...",
+        "and videos with poor sound quality",
         "Long video = long wait time"
     ];
 
