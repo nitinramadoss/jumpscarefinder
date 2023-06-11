@@ -3,6 +3,9 @@
 # dependencies
 /jumpscarefinder/node_modules
 /server/node_modules
+/server/.space/
+/server/Spacefile
+/server/Discovery.md
 /.pnp
 .pnp.js
 

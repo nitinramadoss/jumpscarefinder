@@ -2,9 +2,11 @@ const AudioContext = require('web-audio-api').AudioContext
 const yt = require("yt-converter");
 const ytdl = require('ytdl-core');
 const fs = require("fs");
+const os = require('os');
+const path = require('path');
 const context = new AudioContext
 
-const port = 4001;
+const port = process.env.PORT || 8080;
 const express = require('express');
 const app = express();
 const http = require('http');
@@ -14,26 +16,40 @@ const { Server } = require('socket.io');
 const maxParallelUploads = 3;
 const maxMoments = 60;
 
+const tmpDir = path.join(os.tmpdir(), "ftmaudio/");
+
+const makeAudioDir = () => {
+    if (!fs.existsSync(tmpDir)) {
+        fs.mkdirSync(tmpDir);
+    }
+};
+
 app.use(cors());
 
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: 'http://localhost:3000',
+        origin: '*',
         methods: ['GET', 'POST'],
     },
 });
+
+makeAudioDir();
+
+app.get("/", (req, res) => {
+    res.send("Welcome to FTM");
+  });
 
 io.on('connection', (socket) => {
     console.log(`Client ${socket.id} connected`);
     socket.on("disconnect", async () => {
         var clients = await io.fetchSockets();
         if (clients.length == 0) {
-            const files = fs.readdirSync("audio/");
+            const files = fs.readdirSync(tmpDir);
             if (files.length != 0) {
                 for (let i = 0; i < files.length; i++) {
                     try {
-                        fs.unlinkSync(`audio/${files[i]}`);
+                        fs.unlinkSync(path.join(tmpDir, files[i]));
                     } catch (error) {
                         console.log(error)
                     }
@@ -55,7 +71,7 @@ io.on('connection', (socket) => {
             }, 1000);
         } else {
             const info = await yt.getInfo(url);
-            const files = fs.readdirSync("audio/");
+            const files = fs.readdirSync(tmpDir);
 
             if (info.lengthSeconds >= 3600) {
                 socket.emit('serverError', {
@@ -74,36 +90,44 @@ io.on('connection', (socket) => {
     });
 });
 
+io.engine.on("connection_error", (err) => {
+    console.log(err.req);      // the request object
+    console.log(err.code);     // the error code, for example 1
+    console.log(err.message);  // the error message, for example "Session ID unknown"
+    console.log(err.context);  // some additional error context
+  });
+
 const getAudio = async (url, info, socket) => {
     const options = {
         url: url,
         itag: 140,
-        directoryDownload: "audio/"
+        directoryDownload: tmpDir
     };
 
     const onClose = () => {
-        const files = fs.readdirSync("audio/");
+        const files = fs.readdirSync(tmpDir);
         var modTitle = info.title.replace(/[^\w]/gi, '');
-        var path = `audio/`;
-
+        var audioFilePath;
+        
         try {
             for (let i = 0; i < files.length; i++) {
                 var modFileName = files[i].replace(".mp3", '');
                 modFileName = modFileName.replace(/[^\w]/gi, '');
 
                 if (modFileName == modTitle) {
-                    path += files[i];
+                    audioFilePath = path.join(tmpDir, files[i]);
                 }
             }
 
-            const audioData = fs.readFileSync(path);
-            fs.unlinkSync(path);
+            const audioData = fs.readFileSync(audioFilePath);
+            fs.unlinkSync(audioFilePath);
 
             if (socket.connected) {
                 socket.emit('status', "Finding moments...");
-                decodeAudio(audioData, info, socket);
+                decodeAudio(audioData, socket);
             }
         } catch (error) {
+            console.log(error)
             socket.emit('serverError', {
                 title: 'Server busy',
                 desc: "Please try again in a few moments"
@@ -120,49 +144,30 @@ const getAudio = async (url, info, socket) => {
     }, onClose);
 };
 
-const decodeAudio = (buffer, info, socket) => {
+const decodeAudio = (buffer, socket) => {
     context.decodeAudioData(buffer, function (audioBuffer) {
         let pcmdata = (audioBuffer.getChannelData(0));
         let samplerate = audioBuffer.sampleRate;
         let length = audioBuffer.length;
 
-        let topKeyMoments = [];
         let keyMoments = [];
 
         const upperThreshold = 0.78;
         const lowerThreshold = -0.78;
-        const upperThresholdTwo = 0.58;
-        const lowerThresholdTwo = -0.58;
-
         const windowTime = 3;
         const windowSize = Math.floor(samplerate * windowTime);
 
         let minPos = 0;
-        let minPosTwo = 0;
         for (let i = 1; i < length; i++) {
             const currTime = Math.floor(i / samplerate);
-
             const minPosValid = i - windowSize < minPos;
-            const passWindow = topKeyMoments.length == 0 || currTime > topKeyMoments[topKeyMoments.length - 1] + windowTime;
-
-            const minPosValidTwo = i - windowSize < minPosTwo;
-            const passWindowTwo = keyMoments.length == 0 || currTime > keyMoments[keyMoments.length - 1] + windowTime;
+            const passWindow = keyMoments.length == 0 || currTime > keyMoments[keyMoments.length - 1] + windowTime;
 
             if (minPosValid && passWindow && pcmdata[i] > upperThreshold) {
-                topKeyMoments.push(currTime);
-            }
-        
-            if (minPosValidTwo && passWindowTwo && pcmdata[i] > upperThresholdTwo) {
                 keyMoments.push(currTime);
             }
 
             minPos = (pcmdata[i] < lowerThreshold) ? i : minPos;
-            minPosTwo = (pcmdata[i] < lowerThresholdTwo) ? i : minPosTwo;
-        }
-
-        const mins = Math.floor(info.lengthSeconds / 60);
-        if (topKeyMoments.length / mins >= 0.4) {
-            keyMoments = topKeyMoments;
         }
 
         if (keyMoments.length > maxMoments) {
@@ -177,7 +182,7 @@ const decodeAudio = (buffer, info, socket) => {
                     offset++;
                 } else {
                     baseline = copy[i];
-                } 
+                }
             }
 
             for (let i = 0; i < numElemsRemove; i++) {
@@ -200,4 +205,4 @@ const decodeAudio = (buffer, info, socket) => {
     })
 }
 
-server.listen(port, () => `Server is running on port ${port}`);
+server.listen(port, () => console.log(`Server is running on port ${port}`));
