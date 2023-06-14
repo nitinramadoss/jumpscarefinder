@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Card } from '@mui/material';
+import { Box } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import HourglassTopIcon from '@mui/icons-material/HourglassTop';
 import SlideshowIcon from '@mui/icons-material/Slideshow';

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Button } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
-import { blue } from '@mui/material/colors';
 import { NoteText } from './components/NoteText.js';
 import { ErrorDialog } from './components/ErrorDialog.js';
 import { MomentGrid } from './components/MomentGrid.js';
@@ -137,7 +136,7 @@ const App = () => {
         zIndex: 1
       }}>
 
-        {(moments.length == 0 && !loading) &&
+        {(moments.length === 0 && !loading) &&
           <BasicInfo />}
 
         {error.show &&
