@@ -20,7 +20,8 @@ const notes =
         "Abracadabra! The moments will be found in 3-5 business days",
         "Our detection magic often struggles with voiced-over videos...",
         "and videos with poor sound quality",
-        "Long video = long wait time"
+        "Long video = long wait time",
+        "Extremely slow processing speeds are due to Youtube rate limits..please be patient"
     ];
 
 export const NoteText = () => {

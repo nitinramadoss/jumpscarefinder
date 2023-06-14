@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Button, Card } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import { blue } from '@mui/material/colors';
 import { NoteText } from './components/NoteText.js';
@@ -30,8 +30,7 @@ const App = () => {
     socket.on("connect_error", data => {
       setLoading(false);
       setMoments([]);
-      setError({ show: true, title: "Maintenence in progress", desc: "Please try again later" });
-      socket.disconnect();
+      console.log(data);
     });
 
     socket.on("serverError", data => {
@@ -87,7 +86,7 @@ const App = () => {
 
           <p style={{
             fontSize: 20,
-            color: blue[100],
+            color: "#72B8F6",
             paddingRight: 0,
             marginTop: 5,
             marginBottom: 50

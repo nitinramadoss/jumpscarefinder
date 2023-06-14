@@ -14,8 +14,6 @@ const { Server } = require('socket.io');
 const {
     Worker,
     isMainThread,
-    parentPort,
-    workerData
 } = require("worker_threads");
 
 const maxParallelUploads = 3;
