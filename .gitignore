@@ -2,6 +2,7 @@
 
 # dependencies
 /jumpscarefinder/node_modules
+/jumpscarefinder/build
 /server/node_modules
 /server/.space/
 /server/Spacefile
