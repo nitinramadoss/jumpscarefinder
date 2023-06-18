@@ -4,6 +4,7 @@ const fs = require("fs");
 const os = require('os');
 const path = require('path');
 
+const process = require('process');
 const port = process.env.PORT || 8080;
 const express = require('express');
 const app = express();
@@ -16,7 +17,7 @@ const {
     isMainThread,
 } = require("worker_threads");
 
-const maxParallelUploads = 3;
+const maxParallelUploads = 1;
 
 const tmpDir = path.join(os.tmpdir(), "ftmaudio/");
 
@@ -69,7 +70,7 @@ io.on('connection', (socket) => {
             setTimeout(() => {
                 socket.emit('serverError', {
                     title: 'Invalid url',
-                    desc: "Pleae try again with a different Youtube URL"
+                    desc: "Please try again with a different Youtube URL"
                 });
             }, 1000);
         } else {
@@ -129,14 +130,24 @@ const getAudio = async (url, info, socket) => {
                 socket.emit('status', "Finding moments...");
 
                 if (isMainThread) {
-                    const worker = new Worker(path.resolve(__dirname, 'worker.js'), {workerData: audioData});
+                    const worker = new Worker(path.resolve(__dirname, 'worker.js'), { workerData: audioData });
                     worker.on("message", keyMoments => {
                         socket.emit('status', `Found ${keyMoments.length} moment${(keyMoments.length == 1) ? "" : "s"}...`);
-                        setTimeout(() => {
-                            socket.emit('moments', {
-                                keyMoments: keyMoments
-                            })
-                        }, 3000);
+
+                        if (keyMoments.length === 0) {
+                            setTimeout(() => {
+                                socket.emit('serverError', {
+                                    title: 'Failed to find moments',
+                                    desc: "Please try again with a different video. Some videos don't have the characteristics required to find a jumpscare. P.s. our algorithm isn't perfect :("
+                                });
+                            }, 3000);
+                        } else {
+                            setTimeout(() => {
+                                socket.emit('moments', {
+                                    keyMoments: keyMoments
+                                })
+                            }, 3000);
+                        }
                     });
                     worker.on("error", err => {
                         console.log(err)
@@ -145,7 +156,7 @@ const getAudio = async (url, info, socket) => {
                             desc: "Try again with a different Youtube URL"
                         });
                     });
-                }      
+                }
             }
         } catch (error) {
             console.log(error)
@@ -158,11 +169,23 @@ const getAudio = async (url, info, socket) => {
 
     socket.emit('status', "Processing video...");
 
-    yt.convertAudio(options, (percentage) => {
-        if (Math.floor(percentage) % 2 == 0) {
-            socket.emit('status', `Processing video ${Math.floor(percentage)}%...`);
-        }
-    }, onClose);
+    try {
+        yt.convertAudio(options, (percentage) => {
+            if (Math.floor(percentage) % 2 == 0) {
+                socket.emit('status', `Processing video ${Math.floor(percentage)}%...`);
+            }
+        }, onClose);
+    } catch (error) {
+        socket.emit('serverError', {
+            title: 'Processing failed',
+            desc: "Try again with a different Youtube URL"
+        });
+    }
 };
 
 server.listen(port, () => console.log(`Server is running on port ${port}`));
+
+// Event 'uncaughtException'
+process.on('uncaughtException', (error) => {
+    console.log(error);
+});
