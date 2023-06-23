@@ -4,6 +4,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { NoteText } from './components/NoteText.js';
 import { ErrorDialog } from './components/ErrorDialog.js';
 import { MomentGrid } from './components/MomentGrid.js';
+import Fade from 'react-reveal/Fade';
 import { socket } from './socket';
 import './App.css';
 import { BasicInfo } from './components/BasicInfo.js';
@@ -73,56 +74,58 @@ const App = () => {
         zIndex: 0,
         background: "radial-gradient(#00182C, #000000)",
       }}>
-        <div style={{
-          width: "100%",
-        }}>
-          <h1 style={{
-            marginBottom: 0
+        <Fade top>
+          <div style={{
+            width: "100%",
           }}>
-            Find The Moment
-          </h1>
+            <h1 style={{
+              marginBottom: 0
+            }}>
+              Find The Moment
+            </h1>
 
 
-          <p style={{
-            fontSize: 20,
-            color: "#72B8F6",
-            paddingRight: 0,
-            marginTop: 5,
-            marginBottom: 50
-          }}> Discover jumpscares, peak moments, and more! </p>
+            <p style={{
+              fontSize: 20,
+              color: "#72B8F6",
+              paddingRight: 0,
+              marginTop: 5,
+              marginBottom: 50
+            }}> Discover jumpscares, peak moments, and more! </p>
 
-          <Box
-            sx={{
-              width: "100%",
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'center'
-            }}
-          >
-            <input
-              type="text"
-              placeholder="Enter Youtube URL..."
-              style={{
-                width: '50%',
-                border: "1px solid #ccc",
-                padding: 10,
-              }}
-              onChange={handleChange}
-            />
-            <Button variant="contained" size="large" onClick={handleSubmit} disabled={loading}
+            <Box
               sx={{
-                "&.Mui-disabled": {
-                  background: "#ACB0B2",
-                  color: "#c0c0c0"
-                }
+                width: "100%",
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'center'
               }}
-              style={{
-                margin: 10,
-                padding: 10,
-              }}>Submit</Button>
+            >
+              <input
+                type="text"
+                placeholder="Enter Youtube URL..."
+                style={{
+                  width: '50%',
+                  border: "1px solid #ccc",
+                  padding: 10,
+                }}
+                onChange={handleChange}
+              />
+              <Button variant="contained" size="large" onClick={handleSubmit} disabled={loading}
+                sx={{
+                  "&.Mui-disabled": {
+                    background: "#ACB0B2",
+                    color: "#c0c0c0"
+                  }
+                }}
+                style={{
+                  margin: 10,
+                  padding: 10,
+                }}>Submit</Button>
 
-          </Box>
-        </div>
+            </Box>
+          </div>
+        </Fade>
       </div>
 
       <div style={{
@@ -135,7 +138,7 @@ const App = () => {
         justifyContent: 'center',
         zIndex: 1
       }}>
-
+        
         {(moments.length === 0 && !loading) &&
           <BasicInfo />}
 

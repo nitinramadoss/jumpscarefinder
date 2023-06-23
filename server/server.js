@@ -32,7 +32,7 @@ app.use(cors());
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: '*',
+        origin: "https://findthemoment.netlify.app",
         methods: ['GET', 'POST'],
     },
 });
@@ -82,7 +82,7 @@ io.on('connection', (socket) => {
                     title: 'Video duration is too long',
                     desc: "Since this is a free service, video limits are enforced. The video must be less than 1 hour long"
                 });
-            } else if (files.length > maxParallelUploads) {
+            } else if (files.length >= maxParallelUploads) {
                 socket.emit('serverError', {
                     title: 'Server busy',
                     desc: "Please try again in a few moments"
