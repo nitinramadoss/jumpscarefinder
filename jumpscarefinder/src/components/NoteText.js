@@ -19,7 +19,6 @@ const notes =
         "Our detection magic has a tendency to catch when a door opens...",
         "Abracadabra! The moments will be found in 3-5 business days",
         "Our detection magic often struggles with voiced-over videos...",
-        "and videos with poor sound quality",
         "Long video = long wait time",
         "Extremely slow processing speeds are due to Youtube rate limits..please be patient"
     ];
@@ -54,13 +53,14 @@ export const NoteText = () => {
                 width: '100%',
                 position: 'absolute',
                 marginTop: 10,
+                paddingTop: 2,
                 bottom: 20,
             }}>
             <Fade timeout={FADE_INTERVAL_MS} in={noteFade}>{<AutoAwesomeIcon size="small" sx={{ color: yellow[500] }} />}</Fade>
 
             <Fade timeout={FADE_INTERVAL_MS} in={noteFade}>
                 {<span style={{
-                    fontSize: 15,
+                    fontSize: "0.8vmax",
                     marginLeft: 10,
                     color: yellow[100]
                 }}>{notes[notePos]}</span>}</Fade>

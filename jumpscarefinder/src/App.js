@@ -86,7 +86,7 @@ const App = () => {
 
 
             <p style={{
-              fontSize: 20,
+              fontSize: "1.2vmax",
               color: "#72B8F6",
               paddingRight: 0,
               marginTop: 5,
@@ -161,115 +161,13 @@ const App = () => {
           >
             <p style={{ fontSize: 20, paddingRight: 30, marginTop: 5 }}>{progressText}</p>
             <CircularProgress />
-          </Box>}
+          </Box>
+          }
 
         {loading &&
           <NoteText />}
 
       </div>
-
-
-      {/* <Box
-        sx={{
-          height: "50vh",
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignContent: 'center',
-          alignItems: 'center',
-          fontSize: "calc(10px + 2vmin)",
-          color: "#ffffff"
-        }}
-      >
-        <div style={{
-          width: "100%"
-        }}>
-          <h1 style={{
-            marginBottom: 0,
-            marginRight: 10,
-          }}>
-            Find The Moment
-          </h1>
-
-
-          <p style={{
-            fontSize: 20,
-            color: blue[100],
-            paddingRight: 5,
-            marginTop: 5,
-            marginBottom: 50
-          }}> Discover jumpscares, peak moments, and more! </p>
-
-          <Box
-            sx={{
-              width: "100%",
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'center'
-            }}
-          >
-            <input
-              type="text"
-              placeholder="Enter Youtube URL..."
-              style={{
-                width: '50%',
-                border: "1px solid #ccc",
-                padding: 10,
-              }}
-              onChange={handleChange}
-            />
-            <Button variant="contained" size="large" onClick={handleSubmit} disabled={loading}
-              sx={{
-                "&.Mui-disabled": {
-                  background: "#ACB0B2",
-                  color: "#c0c0c0"
-                }
-              }}
-              style={{
-                margin: 10,
-                padding: 10,
-              }}>Submit</Button>
-
-          </Box>
-        </div>
-      </Box>
-
-      <Box
-        sx={{
-          width: "100%",
-          height: "50vh",
-          flex: "1 1 auto",
-          backgroundColor: "#282c34",
-          display: 'flex',
-          flexDirection: 'column',
-          color: "#ffffff",
-          paddingTop: 10,
-        }}
-      >
-        <BasicInfo/>
-
-        {error.show ?
-          <ErrorDialog title={error.title} desc={error.desc} onClose={handleError} /> : <div />}
-
-        {moments.length && !loading ?
-          <MomentGrid url={url} moments={moments} /> : <div />}
-
-        {loading ?
-          <Box
-            sx={{
-              width: "50%",
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'center',
-            }}
-          >
-            <p style={{ fontSize: 20, paddingRight: 30, marginTop: 5 }}>{progressText}</p>
-            <CircularProgress />
-          </Box> : <div />}
-
-        {loading ?
-          <NoteText /> : <div />}
-      </Box> */}
     </div >
   );
 };

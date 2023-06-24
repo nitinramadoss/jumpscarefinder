@@ -31,7 +31,7 @@ export const BasicInfo = () => {
                             alignItems: 'center',
                             justifyContent: 'center'
                         }}>
-                        <h1 style={{ marginRight: 10, color: "#72B8F6" }}>Step 1</h1>
+                        <h1 style={{ marginRight: 10, color: "#72B8F6", fontSize: "2vmax" }}>Step 1</h1>
                         <CloudUploadIcon style={{ paddingTop: 5, color: "#72B8F6" }} />
 
                     </div>
@@ -54,7 +54,7 @@ export const BasicInfo = () => {
                         alignItems: 'center',
                         justifyContent: 'center'
                     }}>
-                    <h1 style={{ marginRight: 10, color: "#72B8F6" }}>Step 2</h1>
+                    <h1 style={{ marginRight: 10, color: "#72B8F6", fontSize: "2vmax" }}>Step 2</h1>
                     <HourglassTopIcon style={{ paddingTop: 5, color: "#72B8F6" }} />
 
                 </div>
@@ -77,7 +77,7 @@ export const BasicInfo = () => {
                         alignItems: 'center',
                         justifyContent: 'center'
                     }}>
-                    <h1 style={{ marginRight: 10, color: "#72B8F6" }}>Step 3</h1>
+                    <h1 style={{ marginRight: 10, color: "#72B8F6", fontSize: "2vmax" }}>Step 3</h1>
                     <SlideshowIcon style={{ paddingTop: 5, color: "#72B8F6" }} />
 
                 </div>
